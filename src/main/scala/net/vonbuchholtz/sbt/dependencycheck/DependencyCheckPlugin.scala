@@ -8,10 +8,10 @@ import org.owasp.dependencycheck.dependency.naming.{GenericIdentifier, Identifie
 import org.owasp.dependencycheck.dependency.{Confidence, Dependency, EvidenceType}
 import org.owasp.dependencycheck.exception.ExceptionCollection
 import org.owasp.dependencycheck.utils.{Settings, SeverityUtil}
-import org.owasp.dependencycheck.utils.Settings.KEYS.*
-import sbt.Keys.*
+import org.owasp.dependencycheck.utils.Settings.KEYS._
+import sbt.Keys._
 import sbt.plugins.JvmPlugin
-import sbt.{Def, File, ScopeFilter, *}
+import sbt.{Def, File, ScopeFilter, _}
 
 import scala.collection.JavaConverters.*
 import scala.util.{Failure, Success, Try}
@@ -22,7 +22,7 @@ object DependencyCheckPlugin extends sbt.AutoPlugin {
 
   object autoImport extends DependencyCheckKeys
 
-  import autoImport.*
+  import autoImport._
 
   override def requires = JvmPlugin
 
@@ -220,7 +220,7 @@ object DependencyCheckPlugin extends sbt.AutoPlugin {
     log.info("Applying project settings to DependencyCheck settings")
 
     setBooleanSetting(AUTO_UPDATE, dependencyCheckAutoUpdate.value)
-    setIntSetting(CVE_CHECK_VALID_FOR_HOURS, dependencyCheckCveValidForHours.value)
+    setIntSetting(NVD_API_VALID_FOR_HOURS, dependencyCheckCveValidForHours.value)
     setFloatSetting(JUNIT_FAIL_ON_CVSS, dependencyCheckJUnitFailBuildOnCVSS.value)
 
     settings.setStringIfNotEmpty(APPLICATION_NAME, name.value)
@@ -306,12 +306,12 @@ object DependencyCheckPlugin extends sbt.AutoPlugin {
     setStringSetting(ANALYZER_ARTIFACTORY_BEARER_TOKEN, dependencyCheckArtifactoryAnalyzerBearerToken.value)
 
     // Advanced Configuration
-    setUrlSetting(CVE_MODIFIED_JSON, dependencyCheckCveUrlModified.value)
-    setStringSetting(CVE_BASE_JSON, dependencyCheckCveUrlBase.value)
-    setStringSetting(CVE_USER, dependencyCheckCveUser.value)
-    setStringSetting(CVE_PASSWORD, dependencyCheckCvePassword.value)
-    setIntSetting(CVE_DOWNLOAD_WAIT_TIME, dependencyCheckCveWaitTime.value)
-    setIntSetting(CVE_START_YEAR, dependencyCheckCveStartYear.value.map(_.max(2002)))
+    setStringSetting(NVD_API_DATAFEED_URL, dependencyCheckCveUrlBase.value)
+    setStringSetting(NVD_API_DATAFEED_USER, dependencyCheckCveUser.value)
+    setStringSetting(NVD_API_DATAFEED_PASSWORD, dependencyCheckCvePassword.value)
+    setStringSetting(NVD_API_KEY, dependencyCheckCveApiKey.value)
+    setIntSetting(NVD_API_DELAY, dependencyCheckCveWaitTime.value)
+    setIntSetting(NVD_API_DATAFEED_START_YEAR, dependencyCheckCveStartYear.value.map(_.max(2002)))
     setIntSetting(CONNECTION_TIMEOUT, dependencyCheckConnectionTimeout.value)
     setIntSetting(CONNECTION_READ_TIMEOUT, dependencyCheckConnectionReadTimeout.value)
     setFileSetting(DATA_DIRECTORY, dependencyCheckDataDirectory.value)
@@ -634,7 +634,10 @@ object DependencyCheckPlugin extends sbt.AutoPlugin {
 
   def failBuildOnCVSS(dependencies: Array[Dependency], cvssScore: Float): Boolean = dependencies.exists(p => {
     p.getVulnerabilities.asScala.exists(v => {
-      (v.getCvssV2 != null && v.getCvssV2.getScore >= cvssScore) || (v.getCvssV3 != null && v.getCvssV3.getBaseScore >= cvssScore || (v.getUnscoredSeverity != null && SeverityUtil.estimateCvssV2(v.getUnscoredSeverity) >= cvssScore)) || (cvssScore <= 0.0f)
+      Option(v.getCvssV2).exists(_.getCvssData.getBaseScore >= cvssScore) ||
+        Option(v.getCvssV3).exists(_.getCvssData.getBaseScore >= cvssScore) ||
+        Option(v.getUnscoredSeverity).exists(SeverityUtil.estimateCvssV2(_) >= cvssScore) ||
+        (cvssScore <= 0.0f)
     })
   })
 

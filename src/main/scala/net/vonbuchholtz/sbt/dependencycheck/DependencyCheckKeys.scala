@@ -1,6 +1,6 @@
 package net.vonbuchholtz.sbt.dependencycheck
 
-import sbt.*
+import sbt._
 
 trait DependencyCheckKeys {
 
@@ -109,6 +109,7 @@ trait DependencyCheckKeys {
 	lazy val dependencyCheckCveUrlBase = settingKey[Option[String]]("Base URL for each year's CVE JSON data feed, the %d will be replaced with the year. ")
 	lazy val dependencyCheckCveUser = settingKey[Option[String]]("The username used when connecting to the cveUrl. ")
 	lazy val dependencyCheckCvePassword = settingKey[Option[String]]("The password used when connecting to the cveUrl. ")
+	lazy val dependencyCheckCveApiKey = settingKey[Option[String]]("The api key used when connecting to the cveUrl. ")
 	lazy val dependencyCheckCveWaitTime = settingKey[Option[Int]]("The time in milliseconds to wait between downloads from the NVD.")
 	lazy val dependencyCheckCveStartYear = settingKey[Option[Int]]("The first year of NVD CVE data to download from the NVD.")
 	lazy val dependencyCheckConnectionTimeout = settingKey[Option[Int]]("Sets the URL Connection Timeout (in milliseconds) used when downloading external data. ")
