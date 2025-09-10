@@ -29,6 +29,7 @@ object DependencyCheckPlugin extends sbt.AutoPlugin {
   override def trigger: PluginTrigger = allRequirements
 
   override lazy val globalSettings = Seq(
+    dependencyCheckCveApiKey       := None,
     dependencyCheckFormat := "HTML",
     dependencyCheckFormats := Seq(),
     dependencyCheckAutoUpdate := None,
