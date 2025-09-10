@@ -105,7 +105,6 @@ trait DependencyCheckKeys {
 	lazy val dependencyCheckPathToGo = settingKey[Option[File]]("The path to the \"go\" runtime.")
 
 	// Advanced configuration
-	lazy val dependencyCheckCveUrlModified = settingKey[Option[URL]]("URL for the modified CVE JSON data feed. Optional if your custom dependencyCheckCveUrlBase is just a domain name change.")
 	lazy val dependencyCheckCveUrlBase = settingKey[Option[String]]("Base URL for each year's CVE JSON data feed, the %d will be replaced with the year. ")
 	lazy val dependencyCheckCveUser = settingKey[Option[String]]("The username used when connecting to the cveUrl. ")
 	lazy val dependencyCheckCvePassword = settingKey[Option[String]]("The password used when connecting to the cveUrl. ")

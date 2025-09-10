@@ -126,7 +126,6 @@ object DependencyCheckPlugin extends sbt.AutoPlugin {
     dependencyCheckPathToGo := None,
 
     // Advanced configuration
-    dependencyCheckCveUrlModified := None,
     dependencyCheckCveUrlBase := None,
     dependencyCheckCveUser := None,
     dependencyCheckCvePassword := None,
